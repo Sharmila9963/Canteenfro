@@ -1,0 +1,104 @@
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
+import { ShoppingBag, Trash2, Clock } from "lucide-react";
+import { QuantityControl } from "@/components/QuantityControl";
+import { ProtectedRoute } from "@/components/ProtectedRoute";
+import { useApp } from "@/context/AppContext";
+import { formatUntil, minutesLeft } from "@/data/tables";
+export const Route = createFileRoute("/cart")({
+    head: () => ({
+        meta: [
+            { title: "Your Cart — Canteen" },
+            { name: "description", content: "Review your items, choose a table, and proceed to payment." },
+        ],
+    }),
+    component: () => (<ProtectedRoute>
+      <CartPage />
+    </ProtectedRoute>),
+});
+function CartPage() {
+    const { cartLines, addItem, removeItem, setQuantity, cartTotal, tables, selectedTable, selectTable, clearCart, orders } = useApp();
+    const navigate = useNavigate();
+    if (cartLines.length === 0) {
+        return (<main className="mx-auto max-w-3xl px-4 py-12 text-center">
+        <ShoppingBag className="mx-auto h-14 w-14 text-muted-foreground"/>
+        <h1 className="mt-4 text-2xl font-bold">Your cart is empty</h1>
+        <p className="mt-1 text-sm text-muted-foreground">Add some delicious items to get started.</p>
+        <Link to="/menu" className="mt-6 inline-flex rounded-full px-5 py-2.5 text-sm font-bold text-primary-foreground" style={{ background: "var(--gradient-primary)" }}>
+          Browse Menu
+        </Link>
+      </main>);
+    }
+    return (<main className="mx-auto max-w-3xl px-4 py-6">
+      <div className="flex items-center justify-between">
+        <h1 className="text-2xl font-bold">Your Cart</h1>
+        <button onClick={clearCart} className="inline-flex items-center gap-1.5 rounded-lg bg-secondary px-3 py-1.5 text-xs font-medium text-muted-foreground hover:bg-destructive/10 hover:text-destructive">
+          <Trash2 className="h-3.5 w-3.5"/> Clear
+        </button>
+      </div>
+
+      <section className="mt-4 flex flex-col gap-2">
+        {cartLines.map(({ item, quantity }) => (<div key={item.id} className="flex items-center gap-3 rounded-2xl border border-border bg-card p-3" style={{ boxShadow: "var(--shadow-card)" }}>
+            <img src={item.image} alt={item.name} loading="lazy" width={64} height={64} className="h-16 w-16 rounded-xl object-cover"/>
+            <div className="flex-1">
+              <p className="font-semibold">{item.name}</p>
+              <p className="text-xs text-muted-foreground">₹{item.price} each</p>
+            </div>
+            <QuantityControl value={quantity} onInc={() => addItem(item.id)} onDec={() => removeItem(item.id)}/>
+            <div className="w-16 text-right">
+              <p className="font-bold text-primary">₹{item.price * quantity}</p>
+              <button onClick={() => setQuantity(item.id, 0)} className="text-[11px] text-muted-foreground hover:text-destructive">
+                remove
+              </button>
+            </div>
+          </div>))}
+      </section>
+
+      <section className="mt-8">
+        <h2 className="text-lg font-bold">Select your table</h2>
+        <p className="text-sm text-muted-foreground">Occupied tables show when they will be free.</p>
+        <div className="mt-3 grid grid-cols-2 gap-2 sm:grid-cols-3 md:grid-cols-4">
+          {tables.map((t) => {
+            const isSelected = selectedTable === t.id;
+            const occupied = t.status === "occupied";
+            const mins = minutesLeft(t.occupiedUntil);
+            const activeOrder = occupied
+                ? orders.find((o) => o.table === t.id && o.status !== "Completed")
+                : null;
+            return (<button key={t.id} disabled={occupied} onClick={() => selectTable(isSelected ? null : t.id)} className={`rounded-xl border-2 p-3 text-left transition ${isSelected
+                    ? "border-primary bg-primary text-primary-foreground shadow-md"
+                    : occupied
+                        ? "cursor-not-allowed border-border bg-muted text-muted-foreground"
+                        : "border-border bg-card hover:border-primary/60 hover:bg-primary/5"}`}>
+                <div className="flex items-center justify-between">
+                  <span className="text-base font-bold">T{t.id}</span>
+                  <span className={`rounded-full px-2 py-0.5 text-[10px] font-semibold ${isSelected
+                    ? "bg-primary-foreground/20"
+                    : occupied
+                        ? "bg-destructive/15 text-destructive"
+                        : "bg-success/15 text-success"}`}>
+                    {occupied ? "Occupied" : isSelected ? "Selected" : "Available"}
+                  </span>
+                </div>
+                {activeOrder && (<p className="mt-1 text-[10px] font-bold text-primary">{activeOrder.token}</p>)}
+                <div className="mt-1 flex items-center gap-1 text-[11px] opacity-90">
+                  <Clock className="h-3 w-3"/>
+                  {occupied
+                    ? `Free at ${formatUntil(t.occupiedUntil)} (${mins}m)`
+                    : "Ready now"}
+                </div>
+              </button>);
+        })}
+        </div>
+      </section>
+
+      <section className="sticky bottom-20 mt-6 rounded-2xl border border-border bg-card p-4 md:bottom-4" style={{ boxShadow: "var(--shadow-elevated)" }}>
+        <div className="flex items-center justify-between text-sm">
+          <span className="text-muted-foreground">Total</span>
+          <span className="text-2xl font-bold text-primary">₹{cartTotal}</span>
+        </div>
+        <button disabled={selectedTable === null} onClick={() => navigate({ to: "/payment" })} className="mt-3 w-full rounded-xl py-3 font-bold text-primary-foreground transition hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50" style={{ background: "var(--gradient-primary)" }}>
+          {selectedTable === null ? "Select a table to continue" : "Proceed to Payment →"}
+        </button>
+      </section>
+    </main>);
+}
