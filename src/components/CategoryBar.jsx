@@ -1,4 +1,4 @@
-import { useApp } from "@/context/AppContext";
+import { useApp } from "../context/AppContext";
 export function CategoryBar({ selected, onSelect, }) {
     const { categories } = useApp();
     const sorted = [...categories].sort((a, b) => a.order - b.order);

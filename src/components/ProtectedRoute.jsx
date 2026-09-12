@@ -1,6 +1,6 @@
-import { Navigate, useLocation } from "@tanstack/react-router";
+import { Navigate, useLocation } from "react-router-dom";
 import { useEffect, useState } from "react";
-import { useAuth } from "@/context/AuthContext";
+import { useAuth } from "../context/AuthContext";
 /**
  * Client-side route guard. Auth state lives in localStorage and is hydrated
  * by AuthProvider on mount, so we wait one tick before deciding to redirect
@@ -19,13 +19,13 @@ export function ProtectedRoute({ children, requireAdmin = false }) {
       </div>);
     }
     if (!isAuthenticated) {
-        const search = { redirect: location.pathname };
+        const search = new URLSearchParams({ redirect: location.pathname });
         if (requireAdmin)
-            search.admin = true;
-        return <Navigate to="/login" search={search}/>;
+            search.set("admin", "true");
+        return <Navigate to={`/login?${search.toString()}`} replace/>;
     }
     if (requireAdmin && !isAdmin) {
-        return <Navigate to="/login" search={{ redirect: location.pathname, admin: true }}/>;
+        return <Navigate to={`/login?redirect=${encodeURIComponent(location.pathname)}&admin=true`} replace/>;
     }
     return <>{children}</>;
 }

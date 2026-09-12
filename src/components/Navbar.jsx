@@ -1,7 +1,7 @@
-import { Link, useLocation, useNavigate } from "@tanstack/react-router";
+import { Link, NavLink, useLocation, useNavigate } from "react-router-dom";
 import { ShoppingCart, UtensilsCrossed, LogIn, LogOut, ShieldCheck } from "lucide-react";
-import { useApp } from "@/context/AppContext";
-import { useAuth } from "@/context/AuthContext";
+import { useApp } from "../context/AppContext";
+import { useAuth } from "../context/AuthContext";
 export function Navbar() {
     const { cartCount } = useApp();
     const { user, isAuthenticated, logout } = useAuth();
@@ -12,7 +12,7 @@ export function Navbar() {
         return null;
     const handleLogout = () => {
         logout();
-        navigate({ to: "/" });
+        navigate("/");
     };
     return (<header className="sticky top-0 z-40 border-b border-border bg-background/85 backdrop-blur supports-[backdrop-filter]:bg-background/70">
       <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-4">
@@ -23,9 +23,9 @@ export function Navbar() {
           <span className="text-lg font-bold tracking-tight">Canteen</span>
         </Link>
         <nav className="hidden items-center gap-6 text-sm md:flex">
-          <Link to="/" activeOptions={{ exact: true }} activeProps={{ className: "text-primary font-semibold" }} className="text-muted-foreground hover:text-foreground">Home</Link>
-          <Link to="/menu" activeProps={{ className: "text-primary font-semibold" }} className="text-muted-foreground hover:text-foreground">Menu</Link>
-          <Link to="/orders" activeProps={{ className: "text-primary font-semibold" }} className="text-muted-foreground hover:text-foreground">Orders</Link>
+          <NavLink to="/" end className={({ isActive }) => `${isActive ? "text-primary font-semibold" : "text-muted-foreground"} hover:text-foreground`}>Home</NavLink>
+          <NavLink to="/menu" className={({ isActive }) => `${isActive ? "text-primary font-semibold" : "text-muted-foreground"} hover:text-foreground`}>Menu</NavLink>
+          <NavLink to="/orders" className={({ isActive }) => `${isActive ? "text-primary font-semibold" : "text-muted-foreground"} hover:text-foreground`}>Orders</NavLink>
           <Link to="/admin" className="inline-flex items-center gap-1 text-muted-foreground hover:text-foreground">
             <ShieldCheck className="h-4 w-4"/> Admin
           </Link>

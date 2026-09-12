@@ -1,4 +1,4 @@
-import { useApp } from "@/context/AppContext";
+import { useApp } from "../context/AppContext";
 import { QuantityControl } from "./QuantityControl";
 export function MenuCard({ item }) {
     const { cart, addItem, removeItem } = useApp();

@@ -1,7 +1,7 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useState } from "react";
-import { initialMenu, initialCategories } from "@/data/menu";
-import { initialTables } from "@/data/tables";
-import { sampleOrders, generateToken } from "@/data/orders";
+import { initialMenu, initialCategories } from "../data/menu";
+import { initialTables } from "../data/tables";
+import { sampleOrders, generateToken } from "../data/orders";
 const AppContext = createContext(null);
 export function AppProvider({ children }) {
     const [menu, setMenu] = useState(initialMenu);

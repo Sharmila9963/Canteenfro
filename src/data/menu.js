@@ -1,9 +1,9 @@
-import dosa from "@/assets/food-dosa.jpg";
-import biryani from "@/assets/food-biryani.jpg";
-import idli from "@/assets/food-idli.jpg";
-import tea from "@/assets/food-tea.jpg";
-import samosa from "@/assets/food-samosa.jpg";
-import lassi from "@/assets/food-lassi.jpg";
+import dosa from "../assets/food-dosa.jpg";
+import biryani from "../assets/food-biryani.jpg";
+import idli from "../assets/food-idli.jpg";
+import tea from "../assets/food-tea.jpg";
+import samosa from "../assets/food-samosa.jpg";
+import lassi from "../assets/food-lassi.jpg";
 export const CATEGORIES = ["Biryani", "Tiffin", "Dosa", "Drinks", "Snacks"];
 export const initialCategories = [
     { id: "c_biryani", name: "Biryani", image: biryani, order: 1 },

@@ -1,6 +1,6 @@
-import { Link, useLocation } from "@tanstack/react-router";
+import { Link, useLocation } from "react-router-dom";
 import { Home, UtensilsCrossed, ShoppingCart, Receipt } from "lucide-react";
-import { useApp } from "@/context/AppContext";
+import { useApp } from "../context/AppContext";
 const items = [
     { to: "/", label: "Home", icon: Home },
     { to: "/menu", label: "Menu", icon: UtensilsCrossed },

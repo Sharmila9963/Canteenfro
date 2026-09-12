@@ -1,6 +1,6 @@
-import { Link, useNavigate } from "@tanstack/react-router";
+import { NavLink, Link, useNavigate } from "react-router-dom";
 import { LayoutDashboard, UtensilsCrossed, Grid3x3, ClipboardList, ArrowLeft, LogOut } from "lucide-react";
-import { useAuth } from "@/context/AuthContext";
+import { useAuth } from "../context/AuthContext";
 const links = [
     { to: "/admin", label: "Dashboard", icon: LayoutDashboard, exact: true },
     { to: "/admin/menu", label: "Menu Management", icon: UtensilsCrossed },
@@ -12,7 +12,7 @@ export function AdminSidebar() {
     const navigate = useNavigate();
     const handleLogout = () => {
         logout();
-        navigate({ to: "/" });
+        navigate("/");
     };
     return (<aside className="hidden w-64 shrink-0 border-r border-border bg-card md:block">
       <div className="sticky top-0 flex h-screen flex-col p-4">
@@ -26,10 +26,10 @@ export function AdminSidebar() {
           </div>
         </div>
         <nav className="flex flex-1 flex-col gap-1">
-          {links.map(({ to, label, icon: Icon, exact }) => (<Link key={to} to={to} activeOptions={{ exact }} activeProps={{ className: "bg-primary/10 text-primary font-semibold" }} className="flex items-center gap-3 rounded-lg px-3 py-2 text-sm text-muted-foreground transition hover:bg-secondary hover:text-foreground">
+          {links.map(({ to, label, icon: Icon, exact }) => (<NavLink key={to} to={to} end={exact} className={({ isActive }) => `flex items-center gap-3 rounded-lg px-3 py-2 text-sm transition hover:bg-secondary hover:text-foreground ${isActive ? "bg-primary/10 text-primary font-semibold" : "text-muted-foreground"}`}>
               <Icon className="h-4 w-4"/>
               {label}
-            </Link>))}
+              </NavLink>))}
         </nav>
 
         {user && (<div className="mt-2 rounded-lg border border-border p-2 text-xs">
@@ -52,13 +52,13 @@ export function AdminMobileNav() {
     const { logout } = useAuth();
     const navigate = useNavigate();
     return (<nav className="flex gap-1 overflow-x-auto border-b border-border bg-card p-2 md:hidden">
-      {links.map(({ to, label, icon: Icon, exact }) => (<Link key={to} to={to} activeOptions={{ exact }} activeProps={{ className: "bg-primary text-primary-foreground" }} className="flex shrink-0 items-center gap-1.5 rounded-lg bg-secondary px-3 py-2 text-xs font-medium">
+          {links.map(({ to, label, icon: Icon, exact }) => (<NavLink key={to} to={to} end={exact} className={({ isActive }) => `flex shrink-0 items-center gap-1.5 rounded-lg px-3 py-2 text-xs font-medium ${isActive ? "bg-primary text-primary-foreground" : "bg-secondary"}`}>
           <Icon className="h-3.5 w-3.5"/>
           {label}
-        </Link>))}
+          </NavLink>))}
       <button onClick={() => {
             logout();
-            navigate({ to: "/" });
+            navigate("/");
         }} className="ml-auto flex shrink-0 items-center gap-1 rounded-lg bg-destructive/10 px-3 py-2 text-xs font-medium text-destructive">
         <LogOut className="h-3.5 w-3.5"/> Logout
       </button>
